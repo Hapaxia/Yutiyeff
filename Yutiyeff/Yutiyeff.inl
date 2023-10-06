@@ -36,7 +36,8 @@
 namespace yutiyeff
 {
 
-inline std::basic_string<char> String::priv_utf8FromUtf32(const std::basic_string<char32_t>& utf32String)
+template <class T, class charT>
+inline std::basic_string<char> String<T, charT>::priv_utf8FromUtf32(const std::basic_string<char32_t>& utf32String)
 {
 	std::basic_string<char> result{};
 	const std::size_t sequenceLength{ utf32String.size() };
@@ -69,7 +70,8 @@ inline std::basic_string<char> String::priv_utf8FromUtf32(const std::basic_strin
 	return result;
 }
 
-inline std::basic_string<char16_t> String::priv_utf16FromUtf32(const std::basic_string<char32_t>& utf32String)
+template <class T, class charT>
+inline std::basic_string<char16_t> String<T, charT>::priv_utf16FromUtf32(const std::basic_string<char32_t>& utf32String)
 {
 	std::basic_string<char16_t> result{};
 	const std::size_t sequenceLength{ utf32String.size() };
@@ -94,7 +96,8 @@ inline std::basic_string<char16_t> String::priv_utf16FromUtf32(const std::basic_
 	return result;
 }
 
-inline std::basic_string<char32_t> String::priv_utf32FromUtf8(const std::basic_string<char>& utf8String)
+template <class T, class charT>
+inline std::basic_string<char32_t> String<T, charT>::priv_utf32FromUtf8(const std::basic_string<char>& utf8String)
 {
 	std::basic_string<char32_t> result{};
 	const std::size_t sequenceLength{ utf8String.size() };
@@ -134,7 +137,8 @@ inline std::basic_string<char32_t> String::priv_utf32FromUtf8(const std::basic_s
 	return result;
 }
 
-inline std::basic_string<char32_t> String::priv_utf32FromUtf16(const std::basic_string<char16_t>& utf16String)
+template <class T, class charT>
+inline std::basic_string<char32_t> String<T, charT>::priv_utf32FromUtf16(const std::basic_string<char16_t>& utf16String)
 {
 	std::basic_string<char32_t> result{};
 	const std::size_t sequenceLength{ utf16String.size() };
@@ -162,6 +166,474 @@ inline std::basic_string<char32_t> String::priv_utf32FromUtf16(const std::basic_
 }
 
 
+
+
+
+
+inline Utf8String::Utf8String()
+{
+}
+
+inline Utf8String::Utf8String(const char* cU8String)
+{
+	*this = std::basic_string<char>(cU8String);
+}
+
+inline Utf8String::Utf8String(const char16_t* cU16String)
+{
+	*this = std::basic_string<char16_t>(cU16String);
+}
+
+inline Utf8String::Utf8String(const char32_t* cU32String)
+{
+	*this = std::basic_string<char32_t>(cU32String);
+}
+
+inline Utf8String::Utf8String(const std::basic_string<char>& u8String)
+{
+	m_sequence = u8String;
+}
+
+inline Utf8String::Utf8String(const std::basic_string<char16_t>& u16String)
+{
+	*this = priv_utf8FromUtf32(priv_utf32FromUtf16(u16String));
+}
+
+inline Utf8String::Utf8String(const std::basic_string<char32_t>& u32String)
+{
+	*this = priv_utf8FromUtf32(u32String);
+}
+
+inline Utf8String::Utf8String(const Utf8String& utf8String)
+{
+	*this = utf8String;
+}
+
+inline Utf8String::Utf8String(const Utf16String& utf16String)
+{
+	m_sequence = priv_utf8FromUtf32(priv_utf32FromUtf16(utf16String.getSequence()));
+}
+
+inline Utf8String::Utf8String(const Utf32String& utf32String)
+{
+	m_sequence = priv_utf8FromUtf32(utf32String.getSequence());
+}
+
+inline Utf8String& Utf8String::operator=(const Utf8String& utf8String)
+{
+	m_sequence = utf8String.m_sequence;
+	return *this;
+}
+
+inline Utf8String& Utf8String::operator+(const Utf8String& utf8String)
+{
+	m_sequence += utf8String.m_sequence;
+	return *this;
+}
+
+inline Utf8String& Utf8String::operator+=(const Utf8String& utf8String)
+{
+	return *this = (*this + utf8String);
+}
+
+inline Utf8String Utf8String::getSubstring(const std::size_t length, const std::size_t offset) const
+{
+	const std::size_t sequenceLength{ m_sequence.size() };
+	for (std::size_t pos{ 0u }, start{ 0u }, end{ 0u }; end < sequenceLength; ++end)
+	{
+		if (pos == offset)
+			start = end;
+		if ((static_cast<unsigned char>(m_sequence[end]) & 0xc0) != 0x80)
+			++pos;
+		if (pos > (length + offset))
+			return m_sequence.substr(start, end - start);
+		if (end + 1u == sequenceLength)
+		{
+			if (offset != 0u)
+				return m_sequence.substr(start, end + 1u - start);
+		}
+	}
+	return m_sequence;
+}
+
+inline void Utf8String::insert(const Utf8String& utf8String, const std::size_t offset)
+{
+	m_sequence = priv_utf8FromUtf32(priv_utf32FromUtf8(m_sequence).insert(offset, priv_utf32FromUtf8(utf8String.m_sequence)));
+}
+
+inline std::size_t Utf8String::find(const Utf8String& utf8String, const std::size_t offset) const
+{
+	return Utf32String(*this).find(Utf32String(utf8String), offset);
+}
+
+inline Utf8String::operator std::string() const
+{
+	return getString();
+}
+
+inline std::string Utf8String::getString() const
+{
+	return getSequence();
+}
+
+inline std::string Utf8String::getNonUnicodeString() const
+{
+	std::string s{};
+	const std::size_t sequenceLength{ m_sequence.size() };
+	for (std::size_t i{ 0u }; i < sequenceLength; ++i)
+	{
+		const unsigned char element{ static_cast<unsigned char>(m_sequence[i]) };
+		if ((element & 0x80) == 0x00)
+			s.push_back(static_cast<char>(element));
+	}
+	return s;
+}
+
+inline std::size_t Utf8String::getLength() const
+{
+	const std::size_t sequenceLength{ m_sequence.size() };
+	std::size_t count{ 0u };
+	for (std::size_t i{ 0u }; i < sequenceLength; ++i)
+	{
+		if ((static_cast<unsigned char>(m_sequence[i]) & 0xc0) != 0x80)
+			++count;
+	}
+	return count;
+}
+
+inline char32_t Utf8String::operator[](const std::size_t index) const
+{
+	return Utf32String(*this)[index];
+}
+
+inline void Utf8String::erase(const std::size_t startPos, std::size_t length)
+{
+	const std::size_t sequenceLength{ m_sequence.size() };
+	if (length > sequenceLength)
+		length = sequenceLength;
+	m_sequence.erase(startPos, length);
+}
+
+inline void Utf8String::clear()
+{
+	m_sequence.clear();
+}
+
+inline std::basic_string<char> Utf8String::getSequence() const
+{
+	return m_sequence;
+}
+
+
+
+
+
+
+
+
+
+
+
+inline Utf16String::Utf16String()
+{
+}
+
+inline Utf16String::Utf16String(const char* cU8String)
+{
+	*this = std::basic_string<char>(cU8String);
+}
+
+inline Utf16String::Utf16String(const char16_t* cU16String)
+{
+	*this = std::basic_string<char16_t>(cU16String);
+}
+
+inline Utf16String::Utf16String(const char32_t* cU32String)
+{
+	*this = std::basic_string<char32_t>(cU32String);
+}
+
+inline Utf16String::Utf16String(const std::basic_string<char>& u8String)
+{
+	*this = priv_utf16FromUtf32(priv_utf32FromUtf8(u8String));
+}
+
+inline Utf16String::Utf16String(const std::basic_string<char16_t>& u16String)
+{
+	m_sequence = u16String;
+}
+
+inline Utf16String::Utf16String(const std::basic_string<char32_t>& u32String)
+{
+	*this = priv_utf16FromUtf32(u32String);
+}
+
+inline Utf16String::Utf16String(const Utf8String& utf8String)
+{
+	*this = priv_utf16FromUtf32(priv_utf32FromUtf8(utf8String));
+}
+
+inline Utf16String::Utf16String(const Utf16String& utf16String)
+{
+	*this = utf16String;
+}
+
+inline Utf16String::Utf16String(const Utf32String& utf32String)
+{
+	*this = priv_utf16FromUtf32(utf32String.getSequence());
+}
+
+inline Utf16String& Utf16String::operator=(const Utf16String& utf16String)
+{
+	m_sequence = utf16String.m_sequence;
+	return *this;
+}
+
+inline Utf16String& Utf16String::operator+(const Utf16String& utf16String)
+{
+	m_sequence += utf16String.m_sequence;
+	return *this;
+}
+
+inline Utf16String& Utf16String::operator+=(const Utf16String& utf16String)
+{
+	return *this = (*this + utf16String);
+}
+
+inline Utf16String Utf16String::getSubstring(const std::size_t length, const std::size_t offset) const
+{
+	const std::size_t sequenceLength{ m_sequence.size() };
+	for (std::size_t pos{ 0u }, start{ 0u }, end{ 0u }; end < sequenceLength; ++end)
+	{
+		if (pos == offset)
+			start = end;
+		const char16_t element{ m_sequence[end] };
+		if ((element <= 0xDBFF) || (element >= 0xE000))
+			++pos;
+		if (pos > (length + offset))
+			return m_sequence.substr(start, end - start);
+		if (end + 1u == sequenceLength)
+		{
+			if (offset != 0u)
+				return m_sequence.substr(start, end + 1u - start);
+		}
+	}
+	return m_sequence;
+}
+
+inline void Utf16String::insert(const Utf16String& utf16String, const std::size_t offset)
+{
+	m_sequence = priv_utf16FromUtf32(priv_utf32FromUtf16(m_sequence).insert(offset, priv_utf32FromUtf16(utf16String.m_sequence)));
+}
+
+inline std::size_t Utf16String::find(const Utf16String& utf16String, const std::size_t offset) const
+{
+	return Utf32String(*this).find(Utf32String(utf16String), offset);
+}
+
+inline Utf16String::operator std::string() const
+{
+	return getString();
+}
+
+inline std::string Utf16String::getString() const
+{
+	return priv_utf8FromUtf32(priv_utf32FromUtf16(m_sequence));
+}
+
+inline std::string Utf16String::getNonUnicodeString() const
+{
+	std::string s{};
+	const std::size_t sequenceLength{ m_sequence.size() };
+	for (std::size_t i{ 0u }; i < sequenceLength; ++i)
+	{
+		const char16_t element{ m_sequence[i] };
+		if (element <= 0x7F)
+			s.push_back(static_cast<char>(static_cast<unsigned char>(element)));
+	}
+	return s;
+}
+
+inline std::size_t Utf16String::getLength() const
+{
+	const std::size_t sequenceLength{ m_sequence.size() };
+	std::size_t count{ 0u };
+	for (std::size_t i{ 0u }; i < sequenceLength; ++i)
+	{
+		const char16_t element{ m_sequence[i] };
+		if ((element <= 0xDBFF) || (element >= 0xE000))
+			++count;
+	}
+	return count;
+}
+
+inline char32_t Utf16String::operator[](const std::size_t index) const
+{
+	return Utf32String(*this)[index];
+}
+
+inline void Utf16String::erase(const std::size_t startPos, std::size_t length)
+{
+	if (length > m_sequence.size())
+		length = m_sequence.size();
+	m_sequence.erase(startPos, length);
+}
+
+inline void Utf16String::clear()
+{
+	m_sequence.clear();
+}
+
+inline std::basic_string<char16_t> Utf16String::getSequence() const
+{
+	return m_sequence;
+}
+
+
+
+
+
+
+
+
+
+inline Utf32String::Utf32String()
+{
+}
+
+inline Utf32String::Utf32String(const char* cU8String)
+{
+	*this = std::basic_string<char>(cU8String);
+}
+
+inline Utf32String::Utf32String(const char16_t* cU16String)
+{
+	*this = std::basic_string<char16_t>(cU16String);
+}
+
+inline Utf32String::Utf32String(const char32_t* cU32String)
+{
+	*this = std::basic_string<char32_t>(cU32String);
+}
+
+inline Utf32String::Utf32String(const std::basic_string<char>& u8String)
+{
+	*this = priv_utf32FromUtf8(u8String);
+}
+
+inline Utf32String::Utf32String(const std::basic_string<char16_t>& u16String)
+{
+	*this = priv_utf32FromUtf16(u16String);
+}
+
+inline Utf32String::Utf32String(const std::basic_string<char32_t>& u32String)
+{
+	m_sequence = u32String;
+}
+
+inline Utf32String::Utf32String(const Utf8String& utf8String)
+{
+	*this = priv_utf32FromUtf8(utf8String.getSequence());
+}
+
+inline Utf32String::Utf32String(const Utf16String& utf16String)
+{
+	*this = priv_utf32FromUtf16(utf16String.getSequence());
+}
+
+inline Utf32String::Utf32String(const Utf32String& utf32String)
+{
+	*this = utf32String;
+}
+
+inline Utf32String& Utf32String::operator=(const Utf32String& utf32String)
+{
+	m_sequence = utf32String.m_sequence;
+	return *this;
+}
+
+inline Utf32String& Utf32String::operator+(const Utf32String& utf32String)
+{
+	m_sequence += utf32String.m_sequence;
+	return *this;
+}
+
+inline Utf32String& Utf32String::operator+=(const Utf32String& utf32String)
+{
+	return *this = (*this + utf32String);
+}
+
+inline Utf32String Utf32String::getSubstring(const std::size_t length, const std::size_t offset) const
+{
+	return Utf32String(m_sequence.substr(offset, length));
+}
+
+inline void Utf32String::insert(const Utf32String& utf32String, const std::size_t offset)
+{
+	m_sequence.insert(offset, utf32String.m_sequence);
+}
+
+inline std::size_t Utf32String::find(const Utf32String& utf32String, const std::size_t offset) const
+{
+	return m_sequence.find(utf32String.m_sequence, offset);
+}
+
+inline Utf32String::operator std::string() const
+{
+	return getString();
+}
+
+inline std::string Utf32String::getString() const
+{
+	return priv_utf8FromUtf32(m_sequence);
+}
+
+inline std::string Utf32String::getNonUnicodeString() const
+{
+	std::string s{};
+	const std::size_t sequenceLength{ m_sequence.size() };
+	for (std::size_t i{ 0u }; i < sequenceLength; ++i)
+	{
+		const char32_t element{ m_sequence[i] };
+		if (element <= 0x7F)
+			s.push_back(static_cast<char>(static_cast<unsigned char>(element)));
+	}
+	return s;
+}
+
+inline std::size_t Utf32String::getLength() const
+{
+	return m_sequence.size();
+}
+
+inline char32_t Utf32String::operator[](const std::size_t index) const
+{
+	return m_sequence[index];
+}
+
+inline void Utf32String::erase(const std::size_t startPos, std::size_t length)
+{
+	if (length > m_sequence.size())
+		length = m_sequence.size();
+	m_sequence.erase(startPos, length);
+}
+
+inline void Utf32String::clear()
+{
+	m_sequence.clear();
+}
+
+inline std::u32string Utf32String::getSequence() const
+{
+	return m_sequence;
+}
+
+
+
+
+
+
+#if (0)
 
 inline Utf8String::Utf8String()
 {
@@ -620,5 +1092,7 @@ inline std::u32string Utf32String::getSequence() const
 {
 	return m_sequence;
 }
+
+#endif // (0)
 
 } // namespace yutiyeff
