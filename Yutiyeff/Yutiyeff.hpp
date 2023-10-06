@@ -34,11 +34,12 @@
 namespace yutiyeff
 {
 
+template <class T, class charT>
 class String
 {
 public:
 	virtual operator std::string() const = 0;
-	virtual std::string getString() const = 0 ; // get a standard std::string representing the UTF-8 formatted version of the string
+	virtual std::string getString() const = 0; // get a standard std::string representing the UTF-8 formatted version of the string
 	virtual std::string getNonUnicodeString() const = 0; // get a standard std::string of only the codes in the 0-127 range
 	virtual size_t getLength() const = 0;
 
@@ -46,17 +47,33 @@ public:
 	virtual void erase(std::size_t startPos, std::size_t length = 1u) = 0;
 	virtual void clear() = 0;
 
+	virtual T& operator=(const T& tString) = 0;
+	virtual T& operator+(const T& tString) = 0;
+	virtual T& operator+=(const T& tString) = 0;
+
+	virtual T getSubstring(std::size_t length, std::size_t offset = 0u) const = 0;
+	virtual void insert(const T& tString, std::size_t offset = 0u) = 0;
+	virtual std::size_t find(const T& tString, std::size_t offset = 0u) const = 0;
+
+	virtual std::basic_string<charT> getSequence() const = 0;
+
 protected:
+	String() = default;
+	String(const String&) = default;
+	String(String&&) = default;
+
 	static std::basic_string<char> priv_utf8FromUtf32(const std::basic_string<char32_t>& utf32String);
 	static std::basic_string<char16_t> priv_utf16FromUtf32(const std::basic_string<char32_t>& utf32String);
 	static std::basic_string<char32_t> priv_utf32FromUtf8(const std::basic_string<char>& utf8String);
 	static std::basic_string<char32_t> priv_utf32FromUtf16(const std::basic_string<char16_t>& utf16String);
 };
 
+
+
 class Utf16String;
 class Utf32String;
 
-class Utf8String : public String
+class Utf8String : public String<Utf8String, char>
 {
 public:
 	Utf8String();
@@ -71,30 +88,30 @@ public:
 	Utf8String(const Utf16String& utf16String);
 	Utf8String(const Utf32String& utf32String);
 
-	Utf8String& operator=(const Utf8String& utf8String);
-	Utf8String& operator+(const Utf8String& utf8String);
-	Utf8String& operator+=(const Utf8String& utf8String);
+	virtual Utf8String& operator=(const Utf8String& utf8String) override final;
+	virtual Utf8String& operator+(const Utf8String& utf8String) override final;
+	virtual Utf8String& operator+=(const Utf8String& utf8String) override final;
 
-	Utf8String getSubstring(std::size_t length, std::size_t offset = 0u) const;
-	void insert(const Utf8String& utf8String, std::size_t offset = 0u);
-	std::size_t find(const Utf8String& utf8String, std::size_t offset = 0u) const;
+	virtual Utf8String getSubstring(std::size_t length, std::size_t offset = 0u) const override final;
+	virtual void insert(const Utf8String& utf8String, std::size_t offset = 0u) override final;
+	virtual std::size_t find(const Utf8String& utf8String, std::size_t offset = 0u) const override final;
 
 	virtual operator std::string() const override final;
 	virtual std::string getString() const override final;
 	virtual std::string getNonUnicodeString() const override final;
 	virtual std::size_t getLength() const override final;
 
-	virtual char32_t operator[](std::size_t index) const;
-	virtual void erase(std::size_t startPos, std::size_t length = 1u);
-	virtual void clear();
+	virtual char32_t operator[](std::size_t index) const override final;
+	virtual void erase(std::size_t startPos, std::size_t length = 1u) override final;
+	virtual void clear() override final;
 
-	std::basic_string<char> getSequence() const;
+	virtual std::basic_string<char> getSequence() const override final;
 
 private:
 	std::basic_string<char> m_sequence;
 };
 
-class Utf16String : public String
+class Utf16String : public String<Utf16String, char16_t>
 {
 public:
 	Utf16String();
@@ -109,30 +126,30 @@ public:
 	Utf16String(const Utf16String& utf16String);
 	Utf16String(const Utf32String& utf32String);
 
-	Utf16String& operator=(const Utf16String& utf16String);
-	Utf16String& operator+(const Utf16String& utf16String);
-	Utf16String& operator+=(const Utf16String& utf16String);
+	virtual Utf16String& operator=(const Utf16String& utf16String) override final;
+	virtual Utf16String& operator+(const Utf16String& utf16String) override final;
+	virtual Utf16String& operator+=(const Utf16String& utf16String) override final;
 
-	Utf16String getSubstring(std::size_t length, std::size_t offset = 0u) const;
-	void insert(const Utf16String& utf16String, std::size_t offset = 0u);
-	std::size_t find(const Utf16String& utf16String, std::size_t offset) const;
+	virtual Utf16String getSubstring(std::size_t length, std::size_t offset = 0u) const override final;
+	virtual void insert(const Utf16String& utf16String, std::size_t offset = 0u) override final;
+	virtual std::size_t find(const Utf16String& utf16String, std::size_t offset) const override final;
 
 	virtual operator std::string() const override final;
 	virtual std::string getString() const override final;
 	virtual std::string getNonUnicodeString() const override final;
 	virtual std::size_t getLength() const override final;
 
-	virtual char32_t operator[](std::size_t index) const;
-	virtual void erase(std::size_t startPos, std::size_t length = 1u);
-	virtual void clear();
+	virtual char32_t operator[](std::size_t index) const override final;
+	virtual void erase(std::size_t startPos, std::size_t length = 1u) override final;
+	virtual void clear() override final;
 
-	std::basic_string<char16_t> getSequence() const;
+	virtual std::basic_string<char16_t> getSequence() const override final;
 
 private:
 	std::basic_string<char16_t> m_sequence;
 };
 
-class Utf32String final : public String
+class Utf32String final : public String<Utf32String, char32_t>
 {
 
 public:
@@ -147,24 +164,24 @@ public:
 	Utf32String(const Utf16String& utf16String);
 	Utf32String(const Utf32String& utf32String);
 
-	Utf32String& operator=(const Utf32String& utf32String);
-	Utf32String& operator+(const Utf32String& utf32String);
-	Utf32String& operator+=(const Utf32String& utf32String);
+	virtual Utf32String& operator=(const Utf32String& utf32String) override final;
+	virtual Utf32String& operator+(const Utf32String& utf32String) override final;
+	virtual Utf32String& operator+=(const Utf32String& utf32String) override final;
 
-	Utf32String getSubstring(std::size_t length, std::size_t offset = 0u) const;
-	void insert(const Utf32String& utf32String, std::size_t offset = 0u);
-	std::size_t find(const Utf32String& utf32String, std::size_t offset) const;
+	virtual Utf32String getSubstring(std::size_t length, std::size_t offset = 0u) const override final;
+	virtual void insert(const Utf32String& utf32String, std::size_t offset = 0u) override final;
+	virtual std::size_t find(const Utf32String& utf32String, std::size_t offset) const override final;
 
 	virtual operator std::string() const override final;
 	virtual std::string getString() const override final;
 	virtual std::string getNonUnicodeString() const override final;
 	virtual std::size_t getLength() const override final;
 
-	virtual char32_t operator[](std::size_t index) const;
-	virtual void erase(std::size_t startPos, std::size_t length = 1u);
-	virtual void clear();
+	virtual char32_t operator[](std::size_t index) const override final;
+	virtual void erase(std::size_t startPos, std::size_t length = 1u) override final;
+	virtual void clear() override final;
 
-	std::u32string getSequence() const;
+	virtual std::u32string getSequence() const override final;
 
 private:
 	std::u32string m_sequence{};
