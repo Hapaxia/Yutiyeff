@@ -62,6 +62,8 @@ protected:
 	String(const String&) = default;
 	String(String&&) = default;
 
+	std::basic_string<CharT> m_sequence;
+
 	static std::basic_string<char> priv_utf8FromUtf32(const std::basic_string<char32_t>& utf32String);
 	static std::basic_string<char16_t> priv_utf16FromUtf32(const std::basic_string<char32_t>& utf32String);
 	static std::basic_string<char32_t> priv_utf32FromUtf8(const std::basic_string<char>& utf8String);
@@ -106,9 +108,6 @@ public:
 	virtual void clear() override final;
 
 	virtual std::basic_string<char> getSequence() const override final;
-
-private:
-	std::basic_string<char> m_sequence;
 };
 
 class Utf16String : public String<Utf16String, char16_t>
@@ -144,9 +143,6 @@ public:
 	virtual void clear() override final;
 
 	virtual std::basic_string<char16_t> getSequence() const override final;
-
-private:
-	std::basic_string<char16_t> m_sequence;
 };
 
 class Utf32String final : public String<Utf32String, char32_t>
@@ -182,9 +178,6 @@ public:
 	virtual void clear() override final;
 
 	virtual std::u32string getSequence() const override final;
-
-private:
-	std::u32string m_sequence{};
 };
 
 } // namespace yutiyeff
