@@ -319,11 +319,6 @@ inline void Utf8String::clear()
 	m_sequence.clear();
 }
 
-inline std::basic_string<char> Utf8String::getSequence() const
-{
-	return m_sequence;
-}
-
 
 
 
@@ -484,11 +479,6 @@ inline void Utf16String::clear()
 	m_sequence.clear();
 }
 
-inline std::basic_string<char16_t> Utf16String::getSequence() const
-{
-	return m_sequence;
-}
-
 
 
 
@@ -621,11 +611,6 @@ inline void Utf32String::erase(const std::size_t startPos, std::size_t length)
 inline void Utf32String::clear()
 {
 	m_sequence.clear();
-}
-
-inline std::u32string Utf32String::getSequence() const
-{
-	return m_sequence;
 }
 
 } // namespace yutiyeff

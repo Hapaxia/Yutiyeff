@@ -55,7 +55,7 @@ public:
 	virtual void insert(const T& tString, std::size_t offset = 0u) = 0;
 	virtual std::size_t find(const T& tString, std::size_t offset = 0u) const = 0;
 
-	virtual std::basic_string<CharT> getSequence() const = 0;
+	std::basic_string<CharT> getSequence() const { return m_sequence; };
 
 protected:
 	String() = default;
@@ -106,8 +106,6 @@ public:
 	virtual char32_t operator[](std::size_t index) const override final;
 	virtual void erase(std::size_t startPos, std::size_t length = 1u) override final;
 	virtual void clear() override final;
-
-	virtual std::basic_string<char> getSequence() const override final;
 };
 
 class Utf16String : public String<Utf16String, char16_t>
@@ -141,8 +139,6 @@ public:
 	virtual char32_t operator[](std::size_t index) const override final;
 	virtual void erase(std::size_t startPos, std::size_t length = 1u) override final;
 	virtual void clear() override final;
-
-	virtual std::basic_string<char16_t> getSequence() const override final;
 };
 
 class Utf32String final : public String<Utf32String, char32_t>
@@ -176,8 +172,6 @@ public:
 	virtual char32_t operator[](std::size_t index) const override final;
 	virtual void erase(std::size_t startPos, std::size_t length = 1u) override final;
 	virtual void clear() override final;
-
-	virtual std::u32string getSequence() const override final;
 };
 
 } // namespace yutiyeff
