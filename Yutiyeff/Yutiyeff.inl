@@ -36,8 +36,8 @@
 namespace yutiyeff
 {
 
-template <class T, class charT>
-inline std::basic_string<char> String<T, charT>::priv_utf8FromUtf32(const std::basic_string<char32_t>& utf32String)
+template <class T, class CharT>
+inline std::basic_string<char> String<T, CharT>::priv_utf8FromUtf32(const std::basic_string<char32_t>& utf32String)
 {
 	std::basic_string<char> result{};
 	const std::size_t sequenceLength{ utf32String.size() };
@@ -70,8 +70,8 @@ inline std::basic_string<char> String<T, charT>::priv_utf8FromUtf32(const std::b
 	return result;
 }
 
-template <class T, class charT>
-inline std::basic_string<char16_t> String<T, charT>::priv_utf16FromUtf32(const std::basic_string<char32_t>& utf32String)
+template <class T, class CharT>
+inline std::basic_string<char16_t> String<T, CharT>::priv_utf16FromUtf32(const std::basic_string<char32_t>& utf32String)
 {
 	std::basic_string<char16_t> result{};
 	const std::size_t sequenceLength{ utf32String.size() };
@@ -96,8 +96,8 @@ inline std::basic_string<char16_t> String<T, charT>::priv_utf16FromUtf32(const s
 	return result;
 }
 
-template <class T, class charT>
-inline std::basic_string<char32_t> String<T, charT>::priv_utf32FromUtf8(const std::basic_string<char>& utf8String)
+template <class T, class CharT>
+inline std::basic_string<char32_t> String<T, CharT>::priv_utf32FromUtf8(const std::basic_string<char>& utf8String)
 {
 	std::basic_string<char32_t> result{};
 	const std::size_t sequenceLength{ utf8String.size() };
@@ -137,8 +137,8 @@ inline std::basic_string<char32_t> String<T, charT>::priv_utf32FromUtf8(const st
 	return result;
 }
 
-template <class T, class charT>
-inline std::basic_string<char32_t> String<T, charT>::priv_utf32FromUtf16(const std::basic_string<char16_t>& utf16String)
+template <class T, class CharT>
+inline std::basic_string<char32_t> String<T, CharT>::priv_utf32FromUtf16(const std::basic_string<char16_t>& utf16String)
 {
 	std::basic_string<char32_t> result{};
 	const std::size_t sequenceLength{ utf16String.size() };

@@ -34,7 +34,7 @@
 namespace yutiyeff
 {
 
-template <class T, class charT>
+template <class T, class CharT>
 class String
 {
 public:
@@ -55,7 +55,7 @@ public:
 	virtual void insert(const T& tString, std::size_t offset = 0u) = 0;
 	virtual std::size_t find(const T& tString, std::size_t offset = 0u) const = 0;
 
-	virtual std::basic_string<charT> getSequence() const = 0;
+	virtual std::basic_string<CharT> getSequence() const = 0;
 
 protected:
 	String() = default;
