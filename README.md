@@ -8,11 +8,11 @@ Each Yutiyeff string type can be converted to any other Yutiyeff string type aut
 ## Types
 Yutiyeff string types:
 - Utf8String
-- > stored internally using UTF-8 encoding with a string of 8-bit values.
+> stored internally using UTF-8 encoding with a string of 8-bit values.
 - Utf16String
-- > stored internally using UTF-16 encoding with a string of 16-bit values.
+> stored internally using UTF-16 encoding with a string of 16-bit values.
 - Utf32String
-- > stored internally using UTF-32 encoding with a string of 32-bit values.
+> stored internally using UTF-32 encoding with a string of 32-bit values.
 
 The different types have their own advantages and disadvantages.
 - UTF-8 uses less storage space for a string of lower values so a basic ASCII-encoded string is the same size as a standard string.
