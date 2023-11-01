@@ -30,3 +30,12 @@ Since all code points can be represented by a single 32-bit value, string manipu
 Yutiyeff does do some direct processing on UTF-8 and UTF-16 but - in some cases - converts to UTF-32 before processing and then back again after processing.
 
 Some more direct processing (for optimisation only) for UTF-8 and UTF-16 may be added in the future but the usage should stay the same.
+
+## C++
+Yutiyeff requires a C++ version of C++11 or later.  
+It is also C++20-ready.
+> Note: Yutiyeff determines whether the compiler is using C++20 using **__cplusplus**.
+
+> If you are using Visual Studio, **__cplusplus** is not automatically set to the correct value.  
+> To fix this, you can add "**/std:c++20 /Zc:__cplusplus**" to the compiler's additional options
+(**Project Properties**->**Configuration Properties**->**C/C++**->**All Options**->**Additional Options**)
