@@ -22,6 +22,7 @@ It can be simpler to use than UTF-8 as manipulation is mostly blocks of 16-bits.
 However, this is not cover those characters outside of the range and uses multiple 16-bit characters to represent code points outside of the range.
 - UTF-32 is the simplest version as all code points can be represented by a single 32-bit value so they can (usually) be treated and manipulated as individual values.
 However, each code points is _always_ 32-bit so the size of the storage will always be the largest possible.
+A basic ASCII-encoded string would require 4 times the storage space as a standard string (or UTF-8 string)
 
 ## Manipulation
 Since all code points can be represented by a single 32-bit value, string manipulation is quite simple using UTF-32 but more complex for UTF-16 and even moreso for UTF-8.
