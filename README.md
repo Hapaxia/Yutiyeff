@@ -39,3 +39,9 @@ It is also C++20-ready.
 > If you are using Visual Studio, **__cplusplus** is not automatically set to the correct value.  
 > If you are using C++20 then you can fix this by adding **`/std:c++20 /Zc:__cplusplus`** to the compiler's additional options  
 (**Project Properties**->**Configuration Properties**->**C/C++**->**All Options**->**Additional Options**)
+
+> As an alternative, you can define Yutiyeff's C++20 flag manually before including Yutiyeff:  
+```c++
+#define YUTIYEFF_CPP20  
+#include <Yutiyeff.hpp>
+```
