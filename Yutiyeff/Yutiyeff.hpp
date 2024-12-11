@@ -59,7 +59,9 @@ public:
 
 	virtual T substr(std::size_t length, std::size_t offset = 0u) const = 0;
 	virtual void insert(const T& tString, std::size_t offset = 0u) = 0;
+	virtual void remove(std::size_t offset, std::size_t length = 0u) = 0; // removes a range of code-points from the string. does nothing if offset out of range. if length pushes the offset/index out of range, it is adjusted to match the end. if length is 0, removes up to the end.
 	virtual std::size_t find(const T& tString, std::size_t offset = 0u) const = 0;
+	virtual void set(std::size_t offset, char32_t char32) = 0; // sets a single u32-character/code-point in the string. offset is the code point index. this replaces a code-point.
 
 	virtual void reserve(std::size_t dataPointsCap) = 0;
 
@@ -67,8 +69,6 @@ public:
 
 	void swap(T& other) { std::swap(m_sequence, other.m_sequence); }
 
-	bool operator==(T& other) { return m_sequence == other.m_sequence; }
-	bool operator!=(T& other) { return !(*this == other); }
 
 	std::basic_string<CharT> getSequence() const { return m_sequence; };
 
@@ -84,6 +84,8 @@ protected:
 	static std::basic_string<char32_t> priv_utf32FromUtf8(const std::basic_string<char>& utf8String);
 	static std::basic_string<char32_t> priv_utf32FromUtf16(const std::basic_string<char16_t>& utf16String);
 };
+
+
 
 
 
@@ -115,24 +117,26 @@ public:
 	Utf8String(const Utf16String& utf16String);
 	Utf8String(const Utf32String& utf32String);
 
-	virtual Utf8String& operator=(const Utf8String& utf8String) override final;
-	virtual Utf8String& operator+(const Utf8String& utf8String) override final;
-	virtual Utf8String& operator+=(const Utf8String& utf8String) override final;
+	Utf8String& operator=(const Utf8String& utf8String) override final;
+	Utf8String& operator+(const Utf8String& utf8String) override final;
+	Utf8String& operator+=(const Utf8String& utf8String) override final;
 
-	virtual Utf8String substr(std::size_t length, std::size_t offset = 0u) const override final;
-	virtual void insert(const Utf8String& utf8String, std::size_t offset = 0u) override final;
-	virtual std::size_t find(const Utf8String& utf8String, std::size_t offset = 0u) const override final;
+	Utf8String substr(std::size_t length, std::size_t offset = 0u) const override final;
+	void insert(const Utf8String& utf8String, std::size_t offset = 0u) override final;
+	void remove(std::size_t offset = 0u, std::size_t length = 0u) override final;
+	std::size_t find(const Utf8String& utf8String, std::size_t offset = 0u) const override final;
+	void set(std::size_t index, char32_t char32) override final;
 
-	virtual void reserve(std::size_t dataPointsCap) override final;
+	void reserve(std::size_t dataPointsCap) override final;
 
-	virtual operator std::string() const override final;
-	virtual std::string getString() const override final;
-	virtual std::string getNonUnicodeString() const override final;
-	virtual std::size_t length() const override final;
+	operator std::string() const override final;
+	std::string getString() const override final;
+	std::string getNonUnicodeString() const override final;
+	std::size_t length() const override final;
 
-	virtual char32_t operator[](std::size_t index) const override final;
-	virtual void erase(std::size_t startPos, std::size_t length = 1u) override final;
-	virtual void clear() override final;
+	char32_t operator[](std::size_t index) const override final;
+	void erase(std::size_t startPos, std::size_t length = 1u) override final;
+	void clear() override final;
 };
 
 class Utf16String : public String<Utf16String, char16_t>
@@ -156,24 +160,26 @@ public:
 	Utf16String(const Utf16String& utf16String);
 	Utf16String(const Utf32String& utf32String);
 
-	virtual Utf16String& operator=(const Utf16String& utf16String) override final;
-	virtual Utf16String& operator+(const Utf16String& utf16String) override final;
-	virtual Utf16String& operator+=(const Utf16String& utf16String) override final;
+	Utf16String& operator=(const Utf16String& utf16String) override final;
+	Utf16String& operator+(const Utf16String& utf16String) override final;
+	Utf16String& operator+=(const Utf16String& utf16String) override final;
 
-	virtual Utf16String substr(std::size_t length, std::size_t offset = 0u) const override final;
-	virtual void insert(const Utf16String& utf16String, std::size_t offset = 0u) override final;
-	virtual std::size_t find(const Utf16String& utf16String, std::size_t offset) const override final;
+	Utf16String substr(std::size_t length, std::size_t offset = 0u) const override final;
+	void insert(const Utf16String& utf16String, std::size_t offset = 0u) override final;
+	void remove(std::size_t offset = 0u, std::size_t length = 0u) override final;
+	std::size_t find(const Utf16String& utf16String, std::size_t offset) const override final;
+	void set(std::size_t index, char32_t char32) override final;
 
-	virtual operator std::string() const override final;
-	virtual std::string getString() const override final;
-	virtual std::string getNonUnicodeString() const override final;
-	virtual std::size_t length() const override final;
+	operator std::string() const override final;
+	std::string getString() const override final;
+	std::string getNonUnicodeString() const override final;
+	std::size_t length() const override final;
 
-	virtual void reserve(std::size_t dataPointsCap) override final;
+	void reserve(std::size_t dataPointsCap) override final;
 
-	virtual char32_t operator[](std::size_t index) const override final;
-	virtual void erase(std::size_t startPos, std::size_t length = 1u) override final;
-	virtual void clear() override final;
+	char32_t operator[](std::size_t index) const override final;
+	void erase(std::size_t startPos, std::size_t length = 1u) override final;
+	void clear() override final;
 };
 
 class Utf32String final : public String<Utf32String, char32_t>
@@ -197,27 +203,36 @@ public:
 	Utf32String(const Utf16String& utf16String);
 	Utf32String(const Utf32String& utf32String);
 
-	virtual Utf32String& operator=(const Utf32String& utf32String) override final;
-	virtual Utf32String& operator+(const Utf32String& utf32String) override final;
-	virtual Utf32String& operator+=(const Utf32String& utf32String) override final;
+	Utf32String& operator=(const Utf32String& utf32String) override final;
+	Utf32String& operator+(const Utf32String& utf32String) override final;
+	Utf32String& operator+=(const Utf32String& utf32String) override final;
 
-	virtual Utf32String substr(std::size_t length, std::size_t offset = 0u) const override final;
-	virtual void insert(const Utf32String& utf32String, std::size_t offset = 0u) override final;
-	virtual std::size_t find(const Utf32String& utf32String, std::size_t offset) const override final;
+	Utf32String substr(std::size_t length, std::size_t offset = 0u) const override final;
+	void insert(const Utf32String& utf32String, std::size_t offset = 0u) override final;
+	void remove(std::size_t offset = 0u, std::size_t length = 0u) override final;
+	std::size_t find(const Utf32String& utf32String, std::size_t offset) const override final;
+	void set(std::size_t index, char32_t char32) override final;
 
-	virtual operator std::string() const override final;
-	virtual std::string getString() const override final;
-	virtual std::string getNonUnicodeString() const override final;
-	virtual std::size_t length() const override final;
+	operator std::string() const override final;
+	std::string getString() const override final;
+	std::string getNonUnicodeString() const override final;
+	std::size_t length() const override final;
 
-	virtual void reserve(std::size_t dataPointsCap) override final;
+	void reserve(std::size_t dataPointsCap) override final;
 
-	virtual char32_t operator[](std::size_t index) const override final;
-	virtual void erase(std::size_t startPos, std::size_t length = 1u) override final;
-	virtual void clear() override final;
+	char32_t operator[](std::size_t index) const override final;
+	void erase(std::size_t startPos, std::size_t length = 1u) override final;
+	void clear() override final;
 };
 
 } // namespace yutiyeff
+
+bool operator==(const yutiyeff::Utf8String& lhs, const yutiyeff::Utf8String& rhs) { return lhs.getSequence() == rhs.getSequence(); }
+bool operator==(const yutiyeff::Utf16String& lhs, const yutiyeff::Utf16String& rhs) { return lhs.getSequence() == rhs.getSequence(); }
+bool operator==(const yutiyeff::Utf32String& lhs, const yutiyeff::Utf32String& rhs) { return lhs.getSequence() == rhs.getSequence(); }
+bool operator!=(const yutiyeff::Utf8String& lhs, const yutiyeff::Utf8String& rhs) { return !(lhs == rhs); }
+bool operator!=(const yutiyeff::Utf16String& lhs, const yutiyeff::Utf16String& rhs) { return !(lhs == rhs); }
+bool operator!=(const yutiyeff::Utf32String& lhs, const yutiyeff::Utf32String& rhs) { return !(lhs == rhs); }
 
 #ifndef YUTIYEFF_NO_NAMESPACE_SHORTCUT
 namespace yy = yutiyeff; // create shortcut namespace
