@@ -1,6 +1,15 @@
 # Yutiyeff
 
 ## Current version
+### 0.4.0
+- #### CHANGE
+  - swapped order or parameters in "insert" to match closer to STL's insert. this also removes default parameter for "offset".
+- #### FIX
+  - made external operators inline.
+
+
+
+## Previous versions
 ### 0.3.0
 - #### ADD
   - ability to insert a single code point; previously could only insert a string.
@@ -9,7 +18,6 @@
   - altered what "erase" does to match what "remove" did. i.e. works with code points rather than values in the sequence.
   - code style: moved "erase" to join the other modification methods and places "find" at the top with the other const method.
 
-## Previous versions
 ### 0.2.0
 - #### ADD
   - ability to change/set a single code point manually.

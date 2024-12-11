@@ -58,8 +58,8 @@ public:
 
 	virtual std::size_t find(const T& tString, std::size_t offset = 0u) const = 0;
 	virtual T substr(std::size_t length, std::size_t offset = 0u) const = 0;
-	virtual void insert(const T& tString, std::size_t offset = 0u) = 0;
-	virtual void insert(char32_t char32, std::size_t offset = 0u) = 0;
+	virtual void insert(std::size_t offset, const T& tString) = 0;
+	virtual void insert(std::size_t offset, char32_t char32) = 0;
 	virtual void erase(std::size_t startPos, std::size_t length = 0u) = 0;
 	virtual void set(std::size_t offset, char32_t char32) = 0; // sets a single u32-character/code-point in the string. offset is the code point index. this replaces a code-point.
 
@@ -122,8 +122,8 @@ public:
 
 	std::size_t find(const Utf8String& utf8String, std::size_t offset = 0u) const override final;
 	Utf8String substr(std::size_t length, std::size_t offset = 0u) const override final;
-	void insert(const Utf8String& utf8String, std::size_t offset = 0u) override final;
-	void insert(char32_t char32, std::size_t offset = 0u) override final;
+	void insert(std::size_t offset, const Utf8String& utf8String) override final;
+	void insert(std::size_t offset, char32_t char32) override final;
 	void erase(std::size_t startPos, std::size_t length = 0u) override final;
 	void set(std::size_t index, char32_t char32) override final;
 
@@ -165,8 +165,8 @@ public:
 
 	std::size_t find(const Utf16String& utf16String, std::size_t offset) const override final;
 	Utf16String substr(std::size_t length, std::size_t offset = 0u) const override final;
-	void insert(const Utf16String& utf16String, std::size_t offset = 0u) override final;
-	void insert(char32_t char32, std::size_t offset = 0u) override final;
+	void insert(std::size_t offset, const Utf16String& utf16String) override final;
+	void insert(std::size_t offset, char32_t char32) override final;
 	void erase(std::size_t startPos, std::size_t length = 0u) override final;
 	void set(std::size_t index, char32_t char32) override final;
 
@@ -208,8 +208,8 @@ public:
 
 	std::size_t find(const Utf32String& utf32String, std::size_t offset) const override final;
 	Utf32String substr(std::size_t length, std::size_t offset = 0u) const override final;
-	void insert(const Utf32String& utf32String, std::size_t offset = 0u) override final;
-	void insert(char32_t char32, std::size_t offset = 0u) override final;
+	void insert(std::size_t offset, const Utf32String& utf32String) override final;
+	void insert(std::size_t offset, char32_t char32) override final;
 	void erase(std::size_t startPos, std::size_t length = 0u) override final;
 	void set(std::size_t index, char32_t char32) override final;
 
@@ -226,12 +226,12 @@ public:
 
 } // namespace yutiyeff
 
-bool operator==(const yutiyeff::Utf8String& lhs, const yutiyeff::Utf8String& rhs) { return lhs.getSequence() == rhs.getSequence(); }
-bool operator==(const yutiyeff::Utf16String& lhs, const yutiyeff::Utf16String& rhs) { return lhs.getSequence() == rhs.getSequence(); }
-bool operator==(const yutiyeff::Utf32String& lhs, const yutiyeff::Utf32String& rhs) { return lhs.getSequence() == rhs.getSequence(); }
-bool operator!=(const yutiyeff::Utf8String& lhs, const yutiyeff::Utf8String& rhs) { return !(lhs == rhs); }
-bool operator!=(const yutiyeff::Utf16String& lhs, const yutiyeff::Utf16String& rhs) { return !(lhs == rhs); }
-bool operator!=(const yutiyeff::Utf32String& lhs, const yutiyeff::Utf32String& rhs) { return !(lhs == rhs); }
+inline bool operator==(const yutiyeff::Utf8String& lhs, const yutiyeff::Utf8String& rhs) { return lhs.getSequence() == rhs.getSequence(); }
+inline bool operator==(const yutiyeff::Utf16String& lhs, const yutiyeff::Utf16String& rhs) { return lhs.getSequence() == rhs.getSequence(); }
+inline bool operator==(const yutiyeff::Utf32String& lhs, const yutiyeff::Utf32String& rhs) { return lhs.getSequence() == rhs.getSequence(); }
+inline bool operator!=(const yutiyeff::Utf8String& lhs, const yutiyeff::Utf8String& rhs) { return !(lhs == rhs); }
+inline bool operator!=(const yutiyeff::Utf16String& lhs, const yutiyeff::Utf16String& rhs) { return !(lhs == rhs); }
+inline bool operator!=(const yutiyeff::Utf32String& lhs, const yutiyeff::Utf32String& rhs) { return !(lhs == rhs); }
 
 #ifndef YUTIYEFF_NO_NAMESPACE_SHORTCUT
 namespace yy = yutiyeff; // create shortcut namespace

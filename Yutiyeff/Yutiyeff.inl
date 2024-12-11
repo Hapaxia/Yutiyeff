@@ -278,15 +278,15 @@ inline Utf8String Utf8String::substr(const std::size_t length, const std::size_t
 	return m_sequence;
 }
 
-inline void Utf8String::insert(const Utf8String& utf8String, const std::size_t offset)
+inline void Utf8String::insert(const std::size_t offset, const Utf8String& utf8String)
 {
 	m_sequence = priv_utf8FromUtf32(priv_utf32FromUtf8(m_sequence).insert(offset, priv_utf32FromUtf8(utf8String.m_sequence)));
 }
 
-inline void Utf8String::insert(const char32_t char32, const std::size_t offset)
+inline void Utf8String::insert(const std::size_t offset, const char32_t char32)
 {
 	Utf32String u32{ Utf32String(*this) };
-	u32.insert(char32, offset);
+	u32.insert(offset, char32);
 	m_sequence = priv_utf8FromUtf32(u32.getSequence());
 }
 
@@ -475,15 +475,15 @@ inline Utf16String Utf16String::substr(const std::size_t length, const std::size
 	return m_sequence;
 }
 
-inline void Utf16String::insert(const Utf16String& utf16String, const std::size_t offset)
+inline void Utf16String::insert(const std::size_t offset, const Utf16String& utf16String)
 {
 	m_sequence = priv_utf16FromUtf32(priv_utf32FromUtf16(m_sequence).insert(offset, priv_utf32FromUtf16(utf16String.m_sequence)));
 }
 
-inline void Utf16String::insert(const char32_t char32, const std::size_t offset)
+inline void Utf16String::insert(const std::size_t offset, const char32_t char32)
 {
 	Utf32String u32{ Utf32String(*this) };
-	u32.insert(char32, offset);
+	u32.insert(offset, char32);
 	m_sequence = priv_utf16FromUtf32(u32.getSequence());
 }
 
@@ -655,12 +655,12 @@ inline Utf32String Utf32String::substr(const std::size_t length, const std::size
 	return Utf32String(m_sequence.substr(offset, length));
 }
 
-inline void Utf32String::insert(const Utf32String& utf32String, const std::size_t offset)
+inline void Utf32String::insert(const std::size_t offset, const Utf32String& utf32String)
 {
 	m_sequence.insert(offset, utf32String.m_sequence);
 }
 
-inline void Utf32String::insert(const char32_t char32, const std::size_t offset)
+inline void Utf32String::insert(const std::size_t offset, const char32_t char32)
 {
 	m_sequence.insert(offset, 1u, char32);
 }
