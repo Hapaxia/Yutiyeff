@@ -253,6 +253,11 @@ inline Utf8String& Utf8String::operator+=(const Utf8String& utf8String)
 	return *this = (*this + utf8String);
 }
 
+inline std::size_t Utf8String::find(const Utf8String& utf8String, const std::size_t offset) const
+{
+	return Utf32String(*this).find(Utf32String(utf8String), offset);
+}
+
 inline Utf8String Utf8String::substr(const std::size_t length, const std::size_t offset) const
 {
 	const std::size_t sequenceLength{ m_sequence.size() };
@@ -278,16 +283,18 @@ inline void Utf8String::insert(const Utf8String& utf8String, const std::size_t o
 	m_sequence = priv_utf8FromUtf32(priv_utf32FromUtf8(m_sequence).insert(offset, priv_utf32FromUtf8(utf8String.m_sequence)));
 }
 
-inline void Utf8String::remove(std::size_t offset, std::size_t length)
+inline void Utf8String::insert(const char32_t char32, const std::size_t offset)
 {
 	Utf32String u32{ Utf32String(*this) };
-	u32.erase(offset, length);
+	u32.insert(char32, offset);
 	m_sequence = priv_utf8FromUtf32(u32.getSequence());
 }
 
-inline std::size_t Utf8String::find(const Utf8String& utf8String, const std::size_t offset) const
+inline void Utf8String::erase(const std::size_t startPos, const std::size_t length)
 {
-	return Utf32String(*this).find(Utf32String(utf8String), offset);
+	Utf32String u32{ Utf32String(*this) };
+	u32.erase(startPos, length);
+	m_sequence = priv_utf8FromUtf32(u32.getSequence());
 }
 
 inline void Utf8String::set(const std::size_t index, const char32_t char32)
@@ -340,14 +347,6 @@ inline std::size_t Utf8String::length() const
 inline char32_t Utf8String::operator[](const std::size_t index) const
 {
 	return (Utf32String(*this))[index];
-}
-
-inline void Utf8String::erase(const std::size_t startPos, std::size_t length)
-{
-	const std::size_t sequenceLength{ m_sequence.size() };
-	if (length > sequenceLength)
-		length = sequenceLength;
-	m_sequence.erase(startPos, length);
 }
 
 inline void Utf8String::clear()
@@ -450,6 +449,11 @@ inline Utf16String& Utf16String::operator+=(const Utf16String& utf16String)
 	return *this = (*this + utf16String);
 }
 
+inline std::size_t Utf16String::find(const Utf16String& utf16String, const std::size_t offset) const
+{
+	return Utf32String(*this).find(Utf32String(utf16String), offset);
+}
+
 inline Utf16String Utf16String::substr(const std::size_t length, const std::size_t offset) const
 {
 	const std::size_t sequenceLength{ m_sequence.size() };
@@ -476,16 +480,18 @@ inline void Utf16String::insert(const Utf16String& utf16String, const std::size_
 	m_sequence = priv_utf16FromUtf32(priv_utf32FromUtf16(m_sequence).insert(offset, priv_utf32FromUtf16(utf16String.m_sequence)));
 }
 
-inline void Utf16String::remove(std::size_t offset, std::size_t length)
+inline void Utf16String::insert(const char32_t char32, const std::size_t offset)
 {
 	Utf32String u32{ Utf32String(*this) };
-	u32.erase(offset, length);
+	u32.insert(char32, offset);
 	m_sequence = priv_utf16FromUtf32(u32.getSequence());
 }
 
-inline std::size_t Utf16String::find(const Utf16String& utf16String, const std::size_t offset) const
+inline void Utf16String::erase(const std::size_t startPos, const std::size_t length)
 {
-	return Utf32String(*this).find(Utf32String(utf16String), offset);
+	Utf32String u32{ Utf32String(*this) };
+	u32.erase(startPos, length);
+	m_sequence = priv_utf16FromUtf32(u32.getSequence());
 }
 
 inline void Utf16String::set(const std::size_t index, const char32_t char32)
@@ -539,13 +545,6 @@ inline void Utf16String::reserve(std::size_t dataPointsCap)
 inline char32_t Utf16String::operator[](const std::size_t index) const
 {
 	return (Utf32String(*this))[index];
-}
-
-inline void Utf16String::erase(const std::size_t startPos, std::size_t length)
-{
-	if (length > m_sequence.size())
-		length = m_sequence.size();
-	m_sequence.erase(startPos, length);
 }
 
 inline void Utf16String::clear()
@@ -646,6 +645,11 @@ inline Utf32String& Utf32String::operator+=(const Utf32String& utf32String)
 	return *this = (*this + utf32String);
 }
 
+inline std::size_t Utf32String::find(const Utf32String& utf32String, const std::size_t offset) const
+{
+	return m_sequence.find(utf32String.m_sequence, offset);
+}
+
 inline Utf32String Utf32String::substr(const std::size_t length, const std::size_t offset) const
 {
 	return Utf32String(m_sequence.substr(offset, length));
@@ -656,18 +660,18 @@ inline void Utf32String::insert(const Utf32String& utf32String, const std::size_
 	m_sequence.insert(offset, utf32String.m_sequence);
 }
 
-inline void Utf32String::remove(std::size_t offset, std::size_t length)
+inline void Utf32String::insert(const char32_t char32, const std::size_t offset)
 {
-	if (offset >= m_sequence.size())
-		return;
-	if ((length == 0u) || ((offset + length) > m_sequence.size()))
-		length = m_sequence.size() - offset;
-	m_sequence.erase(m_sequence.begin() + offset, m_sequence.begin() + offset + length);
+	m_sequence.insert(offset, 1u, char32);
 }
 
-inline std::size_t Utf32String::find(const Utf32String& utf32String, const std::size_t offset) const
+inline void Utf32String::erase(const std::size_t startPos, std::size_t length)
 {
-	return m_sequence.find(utf32String.m_sequence, offset);
+	if (startPos >= m_sequence.size())
+		return;
+	if ((length == 0u) || ((startPos + length) > m_sequence.size()))
+		length = m_sequence.size() - startPos;
+	m_sequence.erase(startPos, length);
 }
 
 inline void Utf32String::set(const std::size_t index, const char32_t char32)
@@ -711,13 +715,6 @@ inline void Utf32String::reserve(const std::size_t dataPointsCap)
 inline char32_t Utf32String::operator[](const std::size_t index) const
 {
 	return m_sequence[index];
-}
-
-inline void Utf32String::erase(const std::size_t startPos, std::size_t length)
-{
-	if (length > m_sequence.size())
-		length = m_sequence.size();
-	m_sequence.erase(startPos, length);
 }
 
 inline void Utf32String::clear()

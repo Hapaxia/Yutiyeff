@@ -50,17 +50,17 @@ public:
 	virtual size_t length() const = 0;
 
 	virtual char32_t operator[](std::size_t index) const = 0;
-	virtual void erase(std::size_t startPos, std::size_t length = 1u) = 0;
 	virtual void clear() = 0;
 
 	virtual T& operator=(const T& tString) = 0;
 	virtual T& operator+(const T& tString) = 0;
 	virtual T& operator+=(const T& tString) = 0;
 
+	virtual std::size_t find(const T& tString, std::size_t offset = 0u) const = 0;
 	virtual T substr(std::size_t length, std::size_t offset = 0u) const = 0;
 	virtual void insert(const T& tString, std::size_t offset = 0u) = 0;
-	virtual void remove(std::size_t offset, std::size_t length = 0u) = 0; // removes a range of code-points from the string. does nothing if offset out of range. if length pushes the offset/index out of range, it is adjusted to match the end. if length is 0, removes up to the end.
-	virtual std::size_t find(const T& tString, std::size_t offset = 0u) const = 0;
+	virtual void insert(char32_t char32, std::size_t offset = 0u) = 0;
+	virtual void erase(std::size_t startPos, std::size_t length = 0u) = 0;
 	virtual void set(std::size_t offset, char32_t char32) = 0; // sets a single u32-character/code-point in the string. offset is the code point index. this replaces a code-point.
 
 	virtual void reserve(std::size_t dataPointsCap) = 0;
@@ -68,7 +68,6 @@ public:
 
 
 	void swap(T& other) { std::swap(m_sequence, other.m_sequence); }
-
 
 	std::basic_string<CharT> getSequence() const { return m_sequence; };
 
@@ -121,10 +120,11 @@ public:
 	Utf8String& operator+(const Utf8String& utf8String) override final;
 	Utf8String& operator+=(const Utf8String& utf8String) override final;
 
+	std::size_t find(const Utf8String& utf8String, std::size_t offset = 0u) const override final;
 	Utf8String substr(std::size_t length, std::size_t offset = 0u) const override final;
 	void insert(const Utf8String& utf8String, std::size_t offset = 0u) override final;
-	void remove(std::size_t offset = 0u, std::size_t length = 0u) override final;
-	std::size_t find(const Utf8String& utf8String, std::size_t offset = 0u) const override final;
+	void insert(char32_t char32, std::size_t offset = 0u) override final;
+	void erase(std::size_t startPos, std::size_t length = 0u) override final;
 	void set(std::size_t index, char32_t char32) override final;
 
 	void reserve(std::size_t dataPointsCap) override final;
@@ -135,7 +135,6 @@ public:
 	std::size_t length() const override final;
 
 	char32_t operator[](std::size_t index) const override final;
-	void erase(std::size_t startPos, std::size_t length = 1u) override final;
 	void clear() override final;
 };
 
@@ -164,10 +163,11 @@ public:
 	Utf16String& operator+(const Utf16String& utf16String) override final;
 	Utf16String& operator+=(const Utf16String& utf16String) override final;
 
+	std::size_t find(const Utf16String& utf16String, std::size_t offset) const override final;
 	Utf16String substr(std::size_t length, std::size_t offset = 0u) const override final;
 	void insert(const Utf16String& utf16String, std::size_t offset = 0u) override final;
-	void remove(std::size_t offset = 0u, std::size_t length = 0u) override final;
-	std::size_t find(const Utf16String& utf16String, std::size_t offset) const override final;
+	void insert(char32_t char32, std::size_t offset = 0u) override final;
+	void erase(std::size_t startPos, std::size_t length = 0u) override final;
 	void set(std::size_t index, char32_t char32) override final;
 
 	operator std::string() const override final;
@@ -178,7 +178,6 @@ public:
 	void reserve(std::size_t dataPointsCap) override final;
 
 	char32_t operator[](std::size_t index) const override final;
-	void erase(std::size_t startPos, std::size_t length = 1u) override final;
 	void clear() override final;
 };
 
@@ -207,10 +206,11 @@ public:
 	Utf32String& operator+(const Utf32String& utf32String) override final;
 	Utf32String& operator+=(const Utf32String& utf32String) override final;
 
+	std::size_t find(const Utf32String& utf32String, std::size_t offset) const override final;
 	Utf32String substr(std::size_t length, std::size_t offset = 0u) const override final;
 	void insert(const Utf32String& utf32String, std::size_t offset = 0u) override final;
-	void remove(std::size_t offset = 0u, std::size_t length = 0u) override final;
-	std::size_t find(const Utf32String& utf32String, std::size_t offset) const override final;
+	void insert(char32_t char32, std::size_t offset = 0u) override final;
+	void erase(std::size_t startPos, std::size_t length = 0u) override final;
 	void set(std::size_t index, char32_t char32) override final;
 
 	operator std::string() const override final;
@@ -221,7 +221,6 @@ public:
 	void reserve(std::size_t dataPointsCap) override final;
 
 	char32_t operator[](std::size_t index) const override final;
-	void erase(std::size_t startPos, std::size_t length = 1u) override final;
 	void clear() override final;
 };
 
