@@ -179,10 +179,20 @@ inline Utf8String::Utf8String(const char* cU8String)
 	*this = std::basic_string<char>(cU8String);
 }
 
+inline Utf8String::Utf8String(const char cU8)
+{
+	*this = std::basic_string<char>(1u, cU8);
+}
+
 #ifdef YUTIYEFF_CPP20
 inline Utf8String::Utf8String(const char8_t* cU8String)
 {
 	*this = std::basic_string<char8_t>(cU8String);
+}
+
+inline Utf8String::Utf8String(const char8_t cU8)
+{
+	*this = std::basic_string<char8_t>(1u, cU8);
 }
 #endif // YUTIYEFF_CPP20
 
@@ -191,9 +201,19 @@ inline Utf8String::Utf8String(const char16_t* cU16String)
 	*this = std::basic_string<char16_t>(cU16String);
 }
 
+inline Utf8String::Utf8String(const char16_t cU16)
+{
+	*this = std::basic_string<char16_t>(1u, cU16);
+}
+
 inline Utf8String::Utf8String(const char32_t* cU32String)
 {
 	*this = std::basic_string<char32_t>(cU32String);
+}
+
+inline Utf8String::Utf8String(const char32_t cU32)
+{
+	*this = std::basic_string<char32_t>(1u, cU32);
 }
 
 inline Utf8String::Utf8String(const std::basic_string<char>& u8String)
@@ -242,15 +262,15 @@ inline Utf8String& Utf8String::operator=(const Utf8String& utf8String)
 	return *this;
 }
 
-inline Utf8String& Utf8String::operator+(const Utf8String& utf8String)
+inline Utf8String Utf8String::operator+(const Utf8String& utf8String) const
 {
-	m_sequence += utf8String.m_sequence;
-	return *this;
+	return Utf8String{ m_sequence + utf8String.m_sequence };
 }
 
 inline Utf8String& Utf8String::operator+=(const Utf8String& utf8String)
 {
-	return *this = (*this + utf8String);
+	m_sequence += utf8String.m_sequence;
+	return *this;
 }
 
 inline std::size_t Utf8String::find(const Utf8String& utf8String, const std::size_t offset) const
@@ -373,10 +393,20 @@ inline Utf16String::Utf16String(const char* cU8String)
 	*this = std::basic_string<char>(cU8String);
 }
 
+inline Utf16String::Utf16String(const char cU8)
+{
+	*this = std::basic_string<char>(1u, cU8);
+}
+
 #ifdef YUTIYEFF_CPP20
 inline Utf16String::Utf16String(const char8_t* cU8String)
 {
 	*this = std::basic_string<char8_t>(cU8String);
+}
+
+inline Utf16String::Utf16String(const char8_t cU8)
+{
+	*this = std::basic_string<char8_t>(1u, cU8);
 }
 #endif // YUTIYEFF_CPP20
 
@@ -385,9 +415,19 @@ inline Utf16String::Utf16String(const char16_t* cU16String)
 	*this = std::basic_string<char16_t>(cU16String);
 }
 
+inline Utf16String::Utf16String(const char16_t cU16)
+{
+	*this = std::basic_string<char16_t>(1u, cU16);
+}
+
 inline Utf16String::Utf16String(const char32_t* cU32String)
 {
 	*this = std::basic_string<char32_t>(cU32String);
+}
+
+inline Utf16String::Utf16String(const char32_t cU32)
+{
+	*this = std::basic_string<char32_t>(1u, cU32);
 }
 
 inline Utf16String::Utf16String(const std::basic_string<char>& u8String)
@@ -438,15 +478,15 @@ inline Utf16String& Utf16String::operator=(const Utf16String& utf16String)
 	return *this;
 }
 
-inline Utf16String& Utf16String::operator+(const Utf16String& utf16String)
+inline Utf16String Utf16String::operator+(const Utf16String& utf16String) const
 {
-	m_sequence += utf16String.m_sequence;
-	return *this;
+	return Utf16String{ m_sequence + utf16String.m_sequence };
 }
 
 inline Utf16String& Utf16String::operator+=(const Utf16String& utf16String)
 {
-	return *this = (*this + utf16String);
+	m_sequence += utf16String.m_sequence;
+	return *this;
 }
 
 inline std::size_t Utf16String::find(const Utf16String& utf16String, const std::size_t offset) const
@@ -569,10 +609,20 @@ inline Utf32String::Utf32String(const char* cU8String)
 	*this = std::basic_string<char>(cU8String);
 }
 
+inline Utf32String::Utf32String(const char cU8)
+{
+	*this = std::basic_string<char>(1u, cU8);
+}
+
 #ifdef YUTIYEFF_CPP20
 inline Utf32String::Utf32String(const char8_t* cU8String)
 {
 	*this = std::basic_string<char8_t>(cU8String);
+}
+
+inline Utf32String::Utf32String(const char8_t cU8)
+{
+	*this = std::basic_string<char8_t>(1u, cU8);
 }
 #endif // YUTIYEFF_CPP20
 
@@ -581,9 +631,19 @@ inline Utf32String::Utf32String(const char16_t* cU16String)
 	*this = std::basic_string<char16_t>(cU16String);
 }
 
+inline Utf32String::Utf32String(const char16_t cU16)
+{
+	*this = std::basic_string<char16_t>(1u, cU16);
+}
+
 inline Utf32String::Utf32String(const char32_t* cU32String)
 {
 	*this = std::basic_string<char32_t>(cU32String);
+}
+
+inline Utf32String::Utf32String(const char32_t cU32)
+{
+	*this = std::basic_string<char32_t>(1u, cU32);
 }
 
 inline Utf32String::Utf32String(const std::basic_string<char>& u8String)
@@ -634,15 +694,15 @@ inline Utf32String& Utf32String::operator=(const Utf32String& utf32String)
 	return *this;
 }
 
-inline Utf32String& Utf32String::operator+(const Utf32String& utf32String)
+inline Utf32String Utf32String::operator+(const Utf32String& utf32String) const
 {
-	m_sequence += utf32String.m_sequence;
-	return *this;
+	return Utf32String{ m_sequence + utf32String.m_sequence };
 }
 
 inline Utf32String& Utf32String::operator+=(const Utf32String& utf32String)
 {
-	return *this = (*this + utf32String);
+	m_sequence += utf32String.m_sequence;
+	return *this;
 }
 
 inline std::size_t Utf32String::find(const Utf32String& utf32String, const std::size_t offset) const
@@ -734,8 +794,8 @@ inline void Utf32String::clear()
 
 // SWAPS
 
-template <class LhsUtfString, class RhsUtfStringT>
-inline void swap(LhsUtfString& lhs, RhsUtfStringT& rhs)
+template <class LhsUtfStringT, class RhsUtfStringT>
+inline void swap(LhsUtfStringT& lhs, RhsUtfStringT& rhs)
 {
 	// first convert both to UTF-32
 	Utf32String lhs32{ lhs };
@@ -751,18 +811,23 @@ inline void swap(LhsUtfString& lhs, RhsUtfStringT& rhs)
 
 
 
-// EXTERNAL OPERATORS
+// EXTERNAL OPERATORS (internal namespace)
 
-template <class LhsUtfString, class RhsUtfStringT>
-inline bool operator==(const LhsUtfString& lhs, const RhsUtfStringT& rhs)
-{
-	return Utf32String{ lhs }.getSequence() == Utf32String{ rhs }.getSequence();
-}
+template <class LhsUtfStringT, class RhsUtfStringT>
+inline bool operator==(const LhsUtfStringT& lhs, const RhsUtfStringT& rhs) { return (yutiyeff::Utf32String(lhs)).getSequence() == (yutiyeff::Utf32String(rhs)).getSequence(); }
 
-template <class LhsUtfString, class RhsUtfStringT>
-inline bool operator!=(const LhsUtfString& lhs, const RhsUtfStringT& rhs)
-{
-	return !(lhs == rhs);
-}
+template <class LhsUtfStringT, class RhsUtfStringT>
+inline bool operator!=(const LhsUtfStringT& lhs, const RhsUtfStringT& rhs) { return !(lhs == rhs); }
+
+inline bool operator==(const Utf8String& lhs, const Utf8String& rhs) { return lhs.getSequence() == rhs.getSequence(); }
+inline bool operator==(const Utf16String& lhs, const Utf16String& rhs) { return lhs.getSequence() == rhs.getSequence(); }
+inline bool operator==(const Utf32String& lhs, const Utf32String& rhs) { return lhs.getSequence() == rhs.getSequence(); }
+inline bool operator!=(const Utf8String& lhs, const Utf8String& rhs) { return !(lhs == rhs); }
+inline bool operator!=(const Utf16String& lhs, const Utf16String& rhs) { return !(lhs == rhs); }
+inline bool operator!=(const Utf32String& lhs, const Utf32String& rhs) { return !(lhs == rhs); }
+
+inline Utf8String operator+(const char* lhs, const Utf8String& rhs) { return (Utf8String{ lhs } + rhs); }
+inline Utf16String operator+(const char* lhs, const Utf16String& rhs) { return (Utf16String{ lhs } + rhs); }
+inline Utf32String operator+(const char* lhs, const Utf32String& rhs) { return (Utf32String{ lhs } + rhs); }
 
 } // namespace yutiyeff

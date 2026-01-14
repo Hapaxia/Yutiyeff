@@ -53,7 +53,7 @@ public:
 	virtual void clear() = 0;
 
 	virtual T& operator=(const T& tString) = 0;
-	virtual T& operator+(const T& tString) = 0;
+	virtual T operator+(const T& tString) const = 0;
 	virtual T& operator+=(const T& tString) = 0;
 
 	virtual std::size_t find(const T& tString, std::size_t offset = 0u) const = 0;
@@ -66,6 +66,9 @@ public:
 	virtual void reserve(std::size_t dataPointsCap) = 0;
 
 
+
+	bool empty() const { return m_sequence.empty(); }
+	std::size_t size() const { return length(); }
 
 	void swap(T& other) { std::swap(m_sequence, other.m_sequence); }
 
@@ -101,11 +104,15 @@ public:
 	Utf8String();
 
 	Utf8String(const char* cU8String);
+	Utf8String(const char cU8);
 #ifdef YUTIYEFF_CPP20
 	Utf8String(const char8_t* cU8String);
+	Utf8String(const char8_t cU8);
 #endif // YUTIYEFF_CPP20
 	Utf8String(const char16_t* cU16String);
+	Utf8String(const char16_t cU16);
 	Utf8String(const char32_t* cU32String);
+	Utf8String(const char32_t cU32);
 	Utf8String(const std::basic_string<char>& u8String);
 #ifdef YUTIYEFF_CPP20
 	Utf8String(const std::basic_string<char8_t>& u8String);
@@ -117,7 +124,7 @@ public:
 	Utf8String(const Utf32String& utf32String);
 
 	Utf8String& operator=(const Utf8String& utf8String) override final;
-	Utf8String& operator+(const Utf8String& utf8String) override final;
+	Utf8String operator+(const Utf8String& utf8String) const override final;
 	Utf8String& operator+=(const Utf8String& utf8String) override final;
 
 	std::size_t find(const Utf8String& utf8String, std::size_t offset = 0u) const override final;
@@ -144,11 +151,15 @@ public:
 	Utf16String();
 
 	Utf16String(const char* cU8String);
+	Utf16String(const char cU8);
 #ifdef YUTIYEFF_CPP20
 	Utf16String(const char8_t* cU8String);
+	Utf16String(const char8_t cU8);
 #endif // YUTIYEFF_CPP20
 	Utf16String(const char16_t* cU16String);
+	Utf16String(const char16_t cU16);
 	Utf16String(const char32_t* cU32String);
+	Utf16String(const char32_t cU32);
 	Utf16String(const std::basic_string<char>& u8String);
 #ifdef YUTIYEFF_CPP20
 	Utf16String(const std::basic_string<char8_t>& u8String);
@@ -160,7 +171,7 @@ public:
 	Utf16String(const Utf32String& utf32String);
 
 	Utf16String& operator=(const Utf16String& utf16String) override final;
-	Utf16String& operator+(const Utf16String& utf16String) override final;
+	Utf16String operator+(const Utf16String& utf16String) const override final;
 	Utf16String& operator+=(const Utf16String& utf16String) override final;
 
 	std::size_t find(const Utf16String& utf16String, std::size_t offset) const override final;
@@ -187,11 +198,15 @@ class Utf32String final : public String<Utf32String, char32_t>
 public:
 	Utf32String();
 	Utf32String(const char* cU8String);
+	Utf32String(const char cU8);
 #ifdef YUTIYEFF_CPP20
 	Utf32String(const char8_t* cU8String);
+	Utf32String(const char8_t cU8);
 #endif // YUTIYEFF_CPP20
 	Utf32String(const char16_t* cU16String);
+	Utf32String(const char16_t cU16);
 	Utf32String(const char32_t* cU32String);
+	Utf32String(const char32_t cU32);
 	Utf32String(const std::basic_string<char>& u8String);
 #ifdef YUTIYEFF_CPP20
 	Utf32String(const std::basic_string<char8_t>& u8String);
@@ -203,7 +218,7 @@ public:
 	Utf32String(const Utf32String& utf32String);
 
 	Utf32String& operator=(const Utf32String& utf32String) override final;
-	Utf32String& operator+(const Utf32String& utf32String) override final;
+	Utf32String operator+(const Utf32String& utf32String) const override final;
 	Utf32String& operator+=(const Utf32String& utf32String) override final;
 
 	std::size_t find(const Utf32String& utf32String, std::size_t offset) const override final;
@@ -225,13 +240,6 @@ public:
 };
 
 } // namespace yutiyeff
-
-inline bool operator==(const yutiyeff::Utf8String& lhs, const yutiyeff::Utf8String& rhs) { return lhs.getSequence() == rhs.getSequence(); }
-inline bool operator==(const yutiyeff::Utf16String& lhs, const yutiyeff::Utf16String& rhs) { return lhs.getSequence() == rhs.getSequence(); }
-inline bool operator==(const yutiyeff::Utf32String& lhs, const yutiyeff::Utf32String& rhs) { return lhs.getSequence() == rhs.getSequence(); }
-inline bool operator!=(const yutiyeff::Utf8String& lhs, const yutiyeff::Utf8String& rhs) { return !(lhs == rhs); }
-inline bool operator!=(const yutiyeff::Utf16String& lhs, const yutiyeff::Utf16String& rhs) { return !(lhs == rhs); }
-inline bool operator!=(const yutiyeff::Utf32String& lhs, const yutiyeff::Utf32String& rhs) { return !(lhs == rhs); }
 
 #ifndef YUTIYEFF_NO_NAMESPACE_SHORTCUT
 namespace yy = yutiyeff; // create shortcut namespace
